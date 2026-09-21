@@ -1,7 +1,8 @@
-// src/types/index.ts
 export type UserRole = "ALUNO" | "PROFESSOR" | "GESTOR";
 
 export type RiskLevel = "BAIXO" | "MEDIO" | "ALTO";
+
+export type AttendanceStatus = "PRESENTE" | "FALTA" | "JUSTIFICADA";
 
 export interface User {
   id: string;
@@ -12,6 +13,15 @@ export interface User {
   avatarUrl?: string;
   curso?: string;
   polo?: string;
+}
+
+export interface StudentAttendanceRow {
+  id: string;
+  matricula: string;
+  nome: string;
+  frequenciaAcumulada: number;
+  statusHoje: AttendanceStatus;
+  observacao: string;
 }
 
 export interface Discipline {

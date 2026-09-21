@@ -1,235 +1,220 @@
-// src/modules/autenticacao/LoginPage.tsx
 import React, { useState } from "react";
-import { useAuthStore } from "../../core/auth/useAuthStore";
+import { useNavigate } from "react-router-dom";
+import { Card } from "../../core/ui/Card";
 import { Button } from "../../core/ui/Button";
-import { KeyRound, Mail, ShieldCheck, SunMedium } from "lucide-react";
+import { useAuthStore } from "../../core/auth/useAuthStore";
+import { UserRole } from "../../types";
+import { KeyRound, Mail, ShieldCheck, UserCheck } from "lucide-react";
 
 export const LoginPage: React.FC = () => {
-  const { loginByMatrícula, loginByMagicLink, loginByCode } = useAuthStore();
+  const [method, setMethod] = useState<"CODE" | "MATRICULA" | "MAGIC">("CODE");
+  const [code, setCode] = useState("2026");
+  const [matricula, setMatricula] = useState("");
+  const [email, setEmail] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
+  const { login } = useAuthStore();
+  const navigate = useNavigate();
 
-  const [aba, setAba] = useState<"matricula" | "magic" | "codigo">("matricula");
-  const [matricula, setMatricula] = useState("20261001");
-  const [senha, setSenha] = useState("123");
-  const [email, setEmail] = useState("lucas.mendes@alvora.edu.br");
-  const [codigo, setCodigo] = useState("2026");
-  const [mensagemSucesso, setMensagemSucesso] = useState("");
-  const [erro, setErro] = useState("");
-
-  const handleLoginMatricula = (e: React.FormEvent) => {
+  const handleLoginSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setErro("");
-    const ok = loginByMatrícula(matricula, senha);
-    if (!ok) {
-      setErro("Matrícula não encontrada no cadastro de testes.");
+    setErrorMsg("");
+
+    let success = false;
+    if (method === "CODE") {
+      success = login({ code });
+    } else if (method === "MATRICULA") {
+      success = login({ matricula });
+    } else if (method === "MAGIC") {
+      success = login({ code: "2026" });
     }
-  };
 
-  const handleMagicLink = (e: React.FormEvent) => {
-    e.preventDefault();
-    setErro("");
-    const ok = loginByMagicLink(email);
-    if (ok) {
-      setMensagemSucesso(
-        "Link de acesso direto gerado e confirmado com sucesso!",
-      );
+    if (success) {
+      const activeRole = useAuthStore.getState().activeRole;
+      const targetPath =
+        activeRole === "ALUNO"
+          ? "/aluno/painel"
+          : activeRole === "PROFESSOR"
+            ? "/professor/turmas"
+            : "/gestor/dashboard";
+      navigate(targetPath, { replace: true });
     } else {
-      setErro("E-mail institucional não encontrado.");
+      setErrorMsg(
+        "Credencial inválida. Utilize as contas de teste ou o código 2026.",
+      );
     }
   };
 
-  const handleCodigo = (e: React.FormEvent) => {
-    e.preventDefault();
-    setErro("");
-    const ok = loginByCode(codigo);
-    if (!ok) {
-      setErro('Código inválido. Tente usar "2026".');
-    }
+  const handleQuickTestLogin = (testMatricula: string, role: UserRole) => {
+    login({ matricula: testMatricula, role });
+    const targetPath =
+      role === "ALUNO"
+        ? "/aluno/painel"
+        : role === "PROFESSOR"
+          ? "/professor/turmas"
+          : "/gestor/dashboard";
+    navigate(targetPath, { replace: true });
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF7F2] flex flex-col justify-center items-center p-4">
-      {/* Header do Amanhecer */}
-      <div className="w-full max-w-md text-center mb-8">
-        <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#DCEEFA] text-[#0B3D66] rounded-[var(--radius-badge)] text-xs font-medium mb-3">
-          <SunMedium className="w-4 h-4 text-[#E8A94C]" />
-          <span>Plataforma Educacional Alvora</span>
-        </div>
-        <h1 className="text-4xl font-display text-[#0B3D66] font-normal tracking-tight">
-          Abrir o dia letivo
-        </h1>
-        <p className="text-sm text-[#4A5A68] mt-2">
-          Gestão Escolar & Ambiente Virtual de Aprendizagem Assíncrono
-        </p>
-      </div>
-
-      <div className="w-full max-w-md bg-white border border-[#16232E]/12 rounded-[var(--radius-card)] p-6 shadow-sm">
-        {/* Seletor de abas inclusivas */}
-        <div className="flex border-b border-[#16232E]/10 mb-6" role="tablist">
-          <button
-            role="tab"
-            aria-selected={aba === "matricula"}
-            onClick={() => setAba("matricula")}
-            className={`flex-1 pb-3 text-xs font-medium border-b-2 text-center transition-colors ${
-              aba === "matricula"
-                ? "border-[#0B3D66] text-[#0B3D66]"
-                : "border-transparent text-[#4A5A68] hover:text-[#16232E]"
-            }`}
-          >
-            Matrícula + Senha
-          </button>
-          <button
-            role="tab"
-            aria-selected={aba === "magic"}
-            onClick={() => setAba("magic")}
-            className={`flex-1 pb-3 text-xs font-medium border-b-2 text-center transition-colors ${
-              aba === "magic"
-                ? "border-[#0B3D66] text-[#0B3D66]"
-                : "border-transparent text-[#4A5A68] hover:text-[#16232E]"
-            }`}
-          >
-            Magic Link
-          </button>
-          <button
-            role="tab"
-            aria-selected={aba === "codigo"}
-            onClick={() => setAba("codigo")}
-            className={`flex-1 pb-3 text-xs font-medium border-b-2 text-center transition-colors ${
-              aba === "codigo"
-                ? "border-[#0B3D66] text-[#0B3D66]"
-                : "border-transparent text-[#4A5A68] hover:text-[#16232E]"
-            }`}
-          >
-            Código Único
-          </button>
-        </div>
-
-        {erro && (
-          <div className="mb-4 p-3 bg-[#C53030]/10 border border-[#C53030]/30 text-[#C53030] text-xs rounded-[var(--radius-control)]">
-            {erro}
+    <div className="min-h-screen bg-[#F8FAFC] flex flex-col items-center justify-center p-4">
+      <div className="max-w-md w-full space-y-4">
+        {/* Cabeçalho */}
+        <div className="text-center space-y-2">
+          <div className="inline-block bg-[#1E3A8A] text-white font-black text-xl px-4 py-2 rounded-lg shadow-sm">
+            SiDi / Alvora
           </div>
-        )}
-
-        {mensagemSucesso && (
-          <div className="mb-4 p-3 bg-[#2F855A]/10 border border-[#2F855A]/30 text-[#2F855A] text-xs rounded-[var(--radius-control)]">
-            {mensagemSucesso}
-          </div>
-        )}
-
-        {aba === "matricula" && (
-          <form onSubmit={handleLoginMatricula} className="space-y-4">
-            <div>
-              <label
-                htmlFor="mat"
-                className="block text-xs font-medium text-[#16232E] mb-1"
-              >
-                Matrícula Institucional
-              </label>
-              <input
-                id="mat"
-                type="text"
-                value={matricula}
-                onChange={(e) => setMatricula(e.target.value)}
-                required
-                className="w-full px-3 py-2 text-sm border border-[#16232E]/20 rounded-[var(--radius-control)] focus:outline-2 focus:outline-[#0B3D66]"
-                placeholder="Ex: 20261001"
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="pass"
-                className="block text-xs font-medium text-[#16232E] mb-1"
-              >
-                Senha
-              </label>
-              <input
-                id="pass"
-                type="password"
-                value={senha}
-                onChange={(e) => setSenha(e.target.value)}
-                required
-                className="w-full px-3 py-2 text-sm border border-[#16232E]/20 rounded-[var(--radius-control)] focus:outline-2 focus:outline-[#0B3D66]"
-                placeholder="••••••••"
-              />
-            </div>
-            <Button type="submit" className="w-full mt-2">
-              <KeyRound className="w-4 h-4" />
-              <span>Acessar Plataforma</span>
-            </Button>
-          </form>
-        )}
-
-        {aba === "magic" && (
-          <form onSubmit={handleMagicLink} className="space-y-4">
-            <div>
-              <label
-                htmlFor="mail"
-                className="block text-xs font-medium text-[#16232E] mb-1"
-              >
-                E-mail Cadastrado
-              </label>
-              <input
-                id="mail"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="w-full px-3 py-2 text-sm border border-[#16232E]/20 rounded-[var(--radius-control)] focus:outline-2 focus:outline-[#0B3D66]"
-                placeholder="seu.nome@alvora.edu.br"
-              />
-            </div>
-            <Button type="submit" variant="secondary" className="w-full mt-2">
-              <Mail className="w-4 h-4" />
-              <span>Enviar Link de Acesso Sem Senha</span>
-            </Button>
-          </form>
-        )}
-
-        {aba === "codigo" && (
-          <form onSubmit={handleCodigo} className="space-y-4">
-            <div>
-              <label
-                htmlFor="cod"
-                className="block text-xs font-medium text-[#16232E] mb-1"
-              >
-                Código de Segurança de Uso Único
-              </label>
-              <input
-                id="cod"
-                type="text"
-                value={codigo}
-                onChange={(e) => setCodigo(e.target.value)}
-                required
-                className="w-full px-3 py-2 text-sm border border-[#16232E]/20 rounded-[var(--radius-control)] focus:outline-2 focus:outline-[#0B3D66] font-mono"
-                placeholder="Digite 2026"
-              />
-            </div>
-            <Button type="submit" className="w-full mt-2">
-              <ShieldCheck className="w-4 h-4" />
-              <span>Validar Código</span>
-            </Button>
-          </form>
-        )}
-
-        {/* Credenciais para facilidade de testes */}
-        <div className="mt-8 pt-4 border-t border-[#16232E]/10">
-          <p className="text-xs font-semibold text-[#0B3D66] mb-2">
-            Contas de Teste Rápidas:
+          <h1 className="text-2xl font-bold text-slate-900">
+            Abrir o Dia Letivo
+          </h1>
+          <p className="text-xs text-slate-600">
+            Gestão Escolar & Ambiente Virtual de Aprendizagem Assíncrono
           </p>
-          <div className="space-y-1.5 text-xs text-[#4A5A68]">
-            <p>
-              <strong className="text-[#16232E]">Aluno:</strong> Matrícula{" "}
-              <code>20261001</code>
-            </p>
-            <p>
-              <strong className="text-[#16232E]">Professor:</strong> Matrícula{" "}
-              <code>P202688</code>
-            </p>
-            <p>
-              <strong className="text-[#16232E]">Gestor:</strong> Matrícula{" "}
-              <code>G202601</code>
-            </p>
-          </div>
         </div>
+
+        <Card className="shadow-md border border-slate-200">
+          {/* Seletor de Método */}
+          <div className="flex border-b border-slate-200 mb-4 text-xs font-bold">
+            <button
+              onClick={() => setMethod("CODE")}
+              className={`flex-1 py-2 text-center cursor-pointer ${
+                method === "CODE"
+                  ? "border-b-2 border-blue-600 text-blue-900"
+                  : "text-slate-500"
+              }`}
+            >
+              Código Único
+            </button>
+            <button
+              onClick={() => setMethod("MATRICULA")}
+              className={`flex-1 py-2 text-center cursor-pointer ${
+                method === "MATRICULA"
+                  ? "border-b-2 border-blue-600 text-blue-900"
+                  : "text-slate-500"
+              }`}
+            >
+              Matrícula + Senha
+            </button>
+            <button
+              onClick={() => setMethod("MAGIC")}
+              className={`flex-1 py-2 text-center cursor-pointer ${
+                method === "MAGIC"
+                  ? "border-b-2 border-blue-600 text-blue-900"
+                  : "text-slate-500"
+              }`}
+            >
+              Magic Link
+            </button>
+          </div>
+
+          <form onSubmit={handleLoginSubmit} className="space-y-4">
+            {method === "CODE" && (
+              <div>
+                <label className="text-xs font-bold text-slate-700 block mb-1">
+                  Código de Segurança de Uso Único
+                </label>
+                <input
+                  type="text"
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
+                  placeholder="2026"
+                  className="w-full bg-slate-50 border border-slate-300 rounded-md p-2.5 text-sm font-semibold focus-visible:ring-2 focus-visible:ring-blue-600"
+                  required
+                />
+              </div>
+            )}
+
+            {method === "MATRICULA" && (
+              <>
+                <div>
+                  <label className="text-xs font-bold text-slate-700 block mb-1">
+                    Matrícula
+                  </label>
+                  <input
+                    type="text"
+                    value={matricula}
+                    onChange={(e) => setMatricula(e.target.value)}
+                    placeholder="20261001"
+                    className="w-full bg-slate-50 border border-slate-300 rounded-md p-2.5 text-sm font-semibold focus-visible:ring-2 focus-visible:ring-blue-600"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-slate-700 block mb-1">
+                    Senha
+                  </label>
+                  <input
+                    type="password"
+                    defaultValue="••••••••"
+                    className="w-full bg-slate-50 border border-slate-300 rounded-md p-2.5 text-sm focus-visible:ring-2 focus-visible:ring-blue-600"
+                    required
+                  />
+                </div>
+              </>
+            )}
+
+            {method === "MAGIC" && (
+              <div>
+                <label className="text-xs font-bold text-slate-700 block mb-1">
+                  E-mail Institucional
+                </label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="usuario@sidi.org.br"
+                  className="w-full bg-slate-50 border border-slate-300 rounded-md p-2.5 text-sm focus-visible:ring-2 focus-visible:ring-blue-600"
+                  required
+                />
+              </div>
+            )}
+
+            {errorMsg && (
+              <p className="text-xs text-red-700 font-semibold bg-red-50 p-2 rounded border border-red-200">
+                {errorMsg}
+              </p>
+            )}
+
+            <Button
+              variant="primary"
+              type="submit"
+              className="w-full font-bold"
+            >
+              Validar e Acessar Portal
+            </Button>
+          </form>
+
+          {/* Dev Helper - Contas de Teste Rápido */}
+          <div className="mt-6 pt-4 border-t border-slate-200 space-y-2">
+            <span className="text-[11px] font-bold text-slate-500 uppercase block text-center">
+              Acesso Rápido para Avaliação (Dev Helper)
+            </span>
+            <div className="grid grid-cols-3 gap-2">
+              <button
+                onClick={() => handleQuickTestLogin("20261001", "ALUNO")}
+                className="p-2 bg-slate-100 hover:bg-blue-100 text-slate-800 rounded text-xs font-semibold text-center border border-slate-200 transition-colors cursor-pointer min-h-[44px]"
+              >
+                <UserCheck className="w-3.5 h-3.5 mx-auto mb-1 text-blue-600" />
+                Aluno
+              </button>
+
+              <button
+                onClick={() => handleQuickTestLogin("P202688", "PROFESSOR")}
+                className="p-2 bg-slate-100 hover:bg-blue-100 text-slate-800 rounded text-xs font-semibold text-center border border-slate-200 transition-colors cursor-pointer min-h-[44px]"
+              >
+                <UserCheck className="w-3.5 h-3.5 mx-auto mb-1 text-blue-600" />
+                Professor
+              </button>
+
+              <button
+                onClick={() => handleQuickTestLogin("G202601", "GESTOR")}
+                className="p-2 bg-slate-100 hover:bg-blue-100 text-slate-800 rounded text-xs font-semibold text-center border border-slate-200 transition-colors cursor-pointer min-h-[44px]"
+              >
+                <UserCheck className="w-3.5 h-3.5 mx-auto mb-1 text-blue-600" />
+                Gestor
+              </button>
+            </div>
+          </div>
+        </Card>
       </div>
     </div>
   );

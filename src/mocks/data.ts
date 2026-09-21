@@ -1,4 +1,3 @@
-// src/mocks/data.ts
 import {
   User,
   Discipline,
@@ -7,6 +6,7 @@ import {
   GradeEntry,
   AttendanceAuditLog,
   CalendarEvent,
+  StudentAttendanceRow,
 } from "../types";
 
 export const mockUsers: User[] = [
@@ -14,26 +14,93 @@ export const mockUsers: User[] = [
     id: "usr_1",
     name: "Lucas Andrade Silva",
     email: "lucas.andrade@aluno.sidi.org.br",
-    matricula: "2024100892",
+    matricula: "20261001",
     role: "ALUNO",
     curso: "Desenvolvimento Full Stack & IA",
-    polo: "Polo Central Recife",
+    polo: "Polo Porto Digital Recife",
   },
   {
     id: "usr_2",
     name: "Prof. Dra. Renata Vasconcelos",
     email: "renata.vasconcelos@professor.sidi.org.br",
-    matricula: "PF9021",
+    matricula: "P202688",
     role: "PROFESSOR",
-    polo: "Campus Tecnológico",
+    polo: "Campus Tecnológico SiDi",
   },
   {
     id: "usr_3",
     name: "Carlos Eduardo Mendonça",
     email: "carlos.mendonca@gestor.sidi.org.br",
-    matricula: "GT1004",
+    matricula: "G202601",
     role: "GESTOR",
     polo: "Diretoria Acadêmica",
+  },
+];
+
+export const mockClassStudents: StudentAttendanceRow[] = [
+  {
+    id: "st_1",
+    matricula: "20261001",
+    nome: "Lucas Andrade Silva",
+    frequenciaAcumulada: 92,
+    statusHoje: "PRESENTE",
+    observacao: "",
+  },
+  {
+    id: "st_2",
+    matricula: "20261002",
+    nome: "Ana Beatriz Souza",
+    frequenciaAcumulada: 45,
+    statusHoje: "FALTA",
+    observacao: "",
+  },
+  {
+    id: "st_3",
+    matricula: "20261003",
+    nome: "Bruno Henrique Lima",
+    frequenciaAcumulada: 68,
+    statusHoje: "PRESENTE",
+    observacao: "",
+  },
+  {
+    id: "st_4",
+    matricula: "20261004",
+    nome: "Carla Maria Ferreira",
+    frequenciaAcumulada: 96,
+    statusHoje: "PRESENTE",
+    observacao: "",
+  },
+  {
+    id: "st_5",
+    matricula: "20261005",
+    nome: "Daniel Oliveira Santos",
+    frequenciaAcumulada: 40,
+    statusHoje: "FALTA",
+    observacao: "",
+  },
+  {
+    id: "st_6",
+    matricula: "20261006",
+    nome: "Fernanda Rocha Costa",
+    frequenciaAcumulada: 82,
+    statusHoje: "PRESENTE",
+    observacao: "",
+  },
+  {
+    id: "st_7",
+    matricula: "20261007",
+    nome: "Gabriel Vinicius Prado",
+    frequenciaAcumulada: 75,
+    statusHoje: "JUSTIFICADA",
+    observacao: "Atestado médico entregue",
+  },
+  {
+    id: "st_8",
+    matricula: "20261008",
+    nome: "Helena Ribeiro Cavalcanti",
+    frequenciaAcumulada: 88,
+    statusHoje: "PRESENTE",
+    observacao: "",
   },
 ];
 
@@ -56,8 +123,7 @@ export const mockDisciplines: Discipline[] = [
     frequenciaAsync: 84,
     notaAtual: 7.5,
     statusAprovacao: "EM_ANDAMENTO",
-    ementaCapitulo:
-      "Capítulo 5: Embeddings e Recuperação Vetorial de Documentos",
+    ementaCapitulo: "Capítulo 5: Embeddings e Recuperação Vetorial",
   },
   {
     id: "disc_3",
@@ -67,7 +133,7 @@ export const mockDisciplines: Discipline[] = [
     frequenciaAsync: 68,
     notaAtual: 5.2,
     statusAprovacao: "EM_RISCO",
-    ementaCapitulo: "Capítulo 2: Diretrizes WCAG 2.2 AA e Foco Visível",
+    ementaCapitulo: "Capítulo 2: Diretrizes WCAG 2.2 AA",
   },
 ];
 
@@ -105,7 +171,7 @@ export const mockStudentsProgress: StudentProgress[] = [
   {
     studentId: "st_101",
     studentName: "Ana Beatriz Souza",
-    matricula: "2024100111",
+    matricula: "20261002",
     frequenciaAsyncPercent: 45,
     mediaParcial: 4.2,
     riskLevel: "ALTO",
@@ -117,7 +183,7 @@ export const mockStudentsProgress: StudentProgress[] = [
   {
     studentId: "st_102",
     studentName: "Bruno Henrique Lima",
-    matricula: "2024100112",
+    matricula: "20261003",
     frequenciaAsyncPercent: 62,
     mediaParcial: 5.8,
     riskLevel: "MEDIO",
@@ -129,7 +195,7 @@ export const mockStudentsProgress: StudentProgress[] = [
   {
     studentId: "st_103",
     studentName: "Carla Maria Ferreira",
-    matricula: "2024100113",
+    matricula: "20261004",
     frequenciaAsyncPercent: 95,
     mediaParcial: 9.1,
     riskLevel: "BAIXO",
@@ -141,7 +207,7 @@ export const mockStudentsProgress: StudentProgress[] = [
   {
     studentId: "st_104",
     studentName: "Daniel Oliveira Santos",
-    matricula: "2024100114",
+    matricula: "20261005",
     frequenciaAsyncPercent: 40,
     mediaParcial: 3.8,
     riskLevel: "ALTO",
@@ -150,25 +216,23 @@ export const mockStudentsProgress: StudentProgress[] = [
     riskReason: "Baixo consumo de videoaulas e ausência de acessos recentes",
     curso: "Ciência de Dados",
   },
-  {
-    studentId: "st_105",
-    studentName: "Fernanda Rocha Costa",
-    matricula: "2024100115",
-    frequenciaAsyncPercent: 78,
-    mediaParcial: 7.2,
-    riskLevel: "BAIXO",
-    riskScore: 0.21,
-    lastAccessDays: 2,
-    riskReason: "Situação regular",
-    curso: "Desenvolvimento Full Stack",
-  },
 ];
 
 export const mockGradeEntries: GradeEntry[] = [
   {
-    studentId: "st_101",
+    studentId: "st_1",
+    studentName: "Lucas Andrade Silva",
+    matricula: "20261001",
+    av1: 8.5,
+    av2: 9.0,
+    trabalhos: 9.0,
+    mediaCalculada: 8.8,
+    status: "SALVO",
+  },
+  {
+    studentId: "st_2",
     studentName: "Ana Beatriz Souza",
-    matricula: "2024100111",
+    matricula: "20261002",
     av1: 4.0,
     av2: 4.5,
     trabalhos: 4.0,
@@ -176,9 +240,9 @@ export const mockGradeEntries: GradeEntry[] = [
     status: "SALVO",
   },
   {
-    studentId: "st_102",
+    studentId: "st_3",
     studentName: "Bruno Henrique Lima",
-    matricula: "2024100112",
+    matricula: "20261003",
     av1: 6.0,
     av2: 5.5,
     trabalhos: 6.0,
@@ -186,33 +250,13 @@ export const mockGradeEntries: GradeEntry[] = [
     status: "SALVO",
   },
   {
-    studentId: "st_103",
+    studentId: "st_4",
     studentName: "Carla Maria Ferreira",
-    matricula: "2024100113",
+    matricula: "20261004",
     av1: 9.5,
     av2: 9.0,
     trabalhos: 9.0,
     mediaCalculada: 9.1,
-    status: "SALVO",
-  },
-  {
-    studentId: "st_104",
-    studentName: "Daniel Oliveira Santos",
-    matricula: "2024100114",
-    av1: 3.5,
-    av2: 4.0,
-    trabalhos: 4.0,
-    mediaCalculada: 3.8,
-    status: "SALVO",
-  },
-  {
-    studentId: "st_105",
-    studentName: "Fernanda Rocha Costa",
-    matricula: "2024100115",
-    av1: 7.0,
-    av2: 7.5,
-    trabalhos: 7.0,
-    mediaCalculada: 7.2,
     status: "SALVO",
   },
 ];
@@ -223,22 +267,11 @@ export const mockAuditLogs: AttendanceAuditLog[] = [
     timestamp: "2026-09-20 14:32",
     professorName: "Prof. Dra. Renata Vasconcelos",
     studentName: "Bruno Henrique Lima",
-    discipline: "Engenharia de Software Assíncrona",
+    discipline: "Engenharia de Software",
     originalPercent: 62,
     overridePercent: 75,
     justification:
-      "Atestado médico homologado na secretaria e entrega suplementar de relatório técnico.",
-  },
-  {
-    id: "log_2",
-    timestamp: "2026-09-18 11:05",
-    professorName: "Prof. Carlos Alberto",
-    studentName: "Ana Beatriz Souza",
-    discipline: "Design Systems e Acessibilidade Web",
-    originalPercent: 40,
-    overridePercent: 45,
-    justification:
-      "Acesso comprovado via laboratório comunitário com falha no registro automático do formulário.",
+      "Atestado médico homologado na secretaria e entrega suplementar.",
   },
 ];
 
@@ -259,13 +292,6 @@ export const mockCalendarEvents: CalendarEvent[] = [
   },
   {
     id: "ev_3",
-    title: "Aulão Assíncrono ao Vivo: Acessibilidade",
-    date: "2026-09-29",
-    type: "AULA",
-    discipline: "UX205",
-  },
-  {
-    id: "ev_4",
     title: "Encerramento do Bimestre e Lançamento Final",
     date: "2026-10-05",
     type: "INSTITUCIONAL",

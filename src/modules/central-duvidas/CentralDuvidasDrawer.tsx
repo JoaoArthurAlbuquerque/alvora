@@ -1,4 +1,3 @@
-// src/modules/central-duvidas/CentralDuvidasDrawer.tsx
 import React, { useState } from "react";
 import { useAuthStore } from "../../core/auth/useAuthStore";
 import { Button } from "../../core/ui/Button";
@@ -11,12 +10,11 @@ export const CentralDuvidasDrawer: React.FC = () => {
     {
       id: "m1",
       sender: "RAG_ASSISTANT",
-      text: "Olá! Sou o Assistente Pedagógico SiDi. Como posso ajudar nas suas dúvidas acadêmicas hoje?",
+      text: "Olá! Sou o Assistente Pedagógico SiDi. Como posso ajudar com suas dúvidas acadêmicas hoje?",
       timestamp: "14:00",
     },
   ]);
   const [input, setInput] = useState("");
-  const [isTyping, setIsTyping] = useState(false);
 
   const handleSend = () => {
     if (!input.trim()) return;
@@ -33,24 +31,20 @@ export const CentralDuvidasDrawer: React.FC = () => {
 
     setMessages((prev) => [...prev, userMsg]);
     setInput("");
-    setIsTyping(true);
 
-    // Simulação de Streaming RAG com Citação da Ementa
     setTimeout(() => {
       const ragMsg: ChatMessage = {
         id: (Date.now() + 1).toString(),
         sender: "RAG_ASSISTANT",
-        text: "A arquitetura modular no ensino assíncrono permite o isolamento de componentes e facilita a validação automática de entregas.",
+        text: "Conforme a ementa oficial, as presenças assíncronas são validadas mediante o consumo mínimo de 75% dos conteúdos e entrega dos exercícios dentro do prazo.",
         timestamp: new Date().toLocaleTimeString([], {
           hour: "2-digit",
           minute: "2-digit",
         }),
-        sourceChapter:
-          "Ementa da Disciplina — Capítulo 3: Arquiteturas Modulares e Clean Code",
+        sourceChapter: "Ementa da Disciplina — Capítulo 1: Regras do AVA",
       };
       setMessages((prev) => [...prev, ragMsg]);
-      setIsTyping(false);
-    }, 600);
+    }, 500);
   };
 
   if (!isRAGDrawerOpen) return null;
@@ -58,7 +52,6 @@ export const CentralDuvidasDrawer: React.FC = () => {
   return (
     <div className="fixed inset-0 z-50 flex justify-end bg-slate-900/40 backdrop-blur-xs">
       <div className="bg-white w-full max-w-md h-full flex flex-col shadow-2xl animate-in slide-in-from-right duration-200">
-        {/* Header da Gaveta */}
         <div className="p-4 border-b border-slate-200 bg-[#1E3A8A] text-white flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-teal-300" />
@@ -66,14 +59,12 @@ export const CentralDuvidasDrawer: React.FC = () => {
           </div>
           <button
             onClick={() => toggleRAGDrawer(false)}
-            className="p-1 text-white hover:bg-blue-800 rounded cursor-pointer min-h-[44px] min-w-[44px] flex items-center justify-center"
-            aria-label="Fechar Central de Dúvidas"
+            className="p-1 text-white hover:bg-blue-800 rounded min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Mensagens do Chat */}
         <div
           className="flex-1 p-4 overflow-y-auto space-y-4 bg-slate-50"
           aria-live="polite"
@@ -84,11 +75,7 @@ export const CentralDuvidasDrawer: React.FC = () => {
               className={`flex flex-col ${m.sender === "USER" ? "items-end" : "items-start"}`}
             >
               <div
-                className={`max-w-[85%] p-3 rounded-xl text-sm ${
-                  m.sender === "USER"
-                    ? "bg-[#2563EB] text-white rounded-br-none"
-                    : "bg-white border border-slate-200 text-slate-900 rounded-bl-none shadow-xs"
-                }`}
+                className={`max-w-[85%] p-3 rounded-xl text-sm ${m.sender === "USER" ? "bg-[#2563EB] text-white" : "bg-white border border-slate-200 text-slate-900"}`}
               >
                 <p>{m.text}</p>
                 {m.sourceChapter && (
@@ -98,29 +85,18 @@ export const CentralDuvidasDrawer: React.FC = () => {
                   </div>
                 )}
               </div>
-              <span className="text-[10px] text-slate-400 mt-1 px-1">
-                {m.timestamp}
-              </span>
             </div>
           ))}
-          {isTyping && (
-            <div className="text-xs text-slate-500 italic flex items-center gap-1">
-              <Sparkles className="w-3.5 h-3.5 animate-spin text-teal-600" />
-              <span>Consultando ementa oficial...</span>
-            </div>
-          )}
         </div>
 
-        {/* Footer com Input */}
         <div className="p-3 border-t border-slate-200 bg-white flex items-center gap-2">
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSend()}
-            placeholder="Digite sua dúvida sobre o curso..."
+            placeholder="Digite sua dúvida sobre a disciplina..."
             className="flex-1 bg-slate-50 border border-slate-300 rounded-md px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-blue-600"
-            aria-label="Mensagem para o assistente RAG"
           />
           <Button
             variant="primary"

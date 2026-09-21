@@ -1,4 +1,3 @@
-// src/core/ui/Badge.tsx
 import React from "react";
 import { CheckCircle2, AlertTriangle, AlertCircle, Info } from "lucide-react";
 import { RiskLevel } from "../../types";

@@ -1,9 +1,8 @@
-// src/modules/calendario/CalendarioModal.tsx
 import React from "react";
 import { useAuthStore } from "../../core/auth/useAuthStore";
 import { Modal } from "../../core/ui/Modal";
 import { mockCalendarEvents } from "../../mocks/data";
-import { Calendar as CalendarIcon, Clock } from "lucide-react";
+import { Calendar as CalendarIcon } from "lucide-react";
 import { Badge } from "../../core/ui/Badge";
 
 export const CalendarioModal: React.FC = () => {
