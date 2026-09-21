@@ -1,261 +1,192 @@
 // src/modules/aluno/PortalAluno.tsx
-import React, { useState } from "react";
-import { CentralTabOption, SidebarMenuOption } from "../../types";
+import React from "react";
 import { Card } from "../../core/ui/Card";
 import { Badge } from "../../core/ui/Badge";
 import { Button } from "../../core/ui/Button";
-import { MOCK_NOTAS_ALUNO, MOCK_FREQUENCIA_ALUNO } from "../../mocks/data";
-import { AssistentePedagogicoModal } from "../assistente-pedagogico/AssistentePedagogicoModal";
+import { mockDisciplines, mockDeadlines, mockUsers } from "../../mocks/data";
+import {
+  ShieldCheck,
+  BookOpen,
+  Clock,
+  Sparkles,
+  HelpCircle,
+  AlertCircle,
+} from "lucide-react";
+import { useAuthStore } from "../../core/auth/useAuthStore";
 
-interface Props {
-  selectedMenu?: SidebarMenuOption;
-}
-
-export const PortalAluno: React.FC<Props> = ({ selectedMenu = "mural" }) => {
-  const [centralAba, setCentralAba] = useState<CentralTabOption>("desempenho");
-  const [modalTutor, setModalTutor] = useState(false);
+export const PortalAluno: React.FC = () => {
+  const { toggleRAGDrawer } = useAuthStore();
+  const aluno = mockUsers[0];
 
   return (
     <div className="space-y-6">
-      {/* VISÃO: MURAL (Página Inicial) */}
-      {selectedMenu === "mural" && (
-        <div className="space-y-6">
-          <div className="bg-blue-600 text-white rounded-xl p-6 shadow-modern flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <div>
-              <span className="text-xs uppercase font-bold tracking-wider text-sky-200">
-                Mural do Aluno · 2026.1
-              </span>
-              <h1 className="text-2xl font-bold mt-1">
-                Bem-vindo ao seu ambiente de estudos
-              </h1>
-              <p className="text-xs text-blue-100 mt-1">
-                Você possui 2 entregas pendentes para esta semana e 1 aviso da
-                coordenação.
+      {/* Cabeçalho de Boas-Vindas */}
+      <div className="bg-white border border-[#E2E8F0] rounded-xl p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-xl font-bold text-slate-900">
+            Olá, {aluno.name}
+          </h1>
+          <p className="text-sm text-slate-600 mt-1">
+            Matrícula:{" "}
+            <strong className="text-slate-800">{aluno.matricula}</strong> |{" "}
+            {aluno.curso}
+          </p>
+        </div>
+        <div className="flex items-center gap-4 bg-slate-50 p-3 rounded-lg border border-slate-200">
+          <div>
+            <span className="text-xs text-slate-500 block">
+              Progresso Geral
+            </span>
+            <span className="text-lg font-extrabold text-blue-900">
+              88% Concluído
+            </span>
+          </div>
+          <div className="w-24 bg-slate-200 h-2.5 rounded-full overflow-hidden">
+            <div className="bg-blue-600 h-full w-[88%]" />
+          </div>
+        </div>
+      </div>
+
+      {/* Grid de Módulos Principais */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Card 1: Frequência Assíncrona Consolidada */}
+        <Card
+          title="Frequência Assíncrona Auditada"
+          subtitle="Registrada por consumo de conteúdo e entregas de atividades"
+        >
+          <div className="flex flex-col sm:flex-row items-center gap-6 py-2">
+            <div className="relative flex items-center justify-center">
+              <div className="w-28 h-28 rounded-full border-8 border-teal-500/20 flex items-center justify-center">
+                <span className="text-2xl font-black text-slate-900">88%</span>
+              </div>
+            </div>
+
+            <div className="space-y-3 flex-1 text-center sm:text-left">
+              <div className="inline-flex items-center gap-2 bg-teal-50 border border-teal-200 text-teal-800 text-xs px-3 py-1.5 rounded-md font-semibold">
+                <ShieldCheck className="w-4 h-4 text-teal-600" />
+                <span>Calculado por IA (Auditado)</span>
+              </div>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                A presença assíncrona é computada automaticamente considerando
+                visualização de videoaulas, leitura de materiais e prazo das
+                entregas.
               </p>
             </div>
+          </div>
+        </Card>
+
+        {/* Card 2: Atalho para Assistente RAG */}
+        <Card
+          title="Central de Dúvidas & RAG"
+          subtitle="Suporte pedagógico direto com base na ementa oficial"
+        >
+          <div className="space-y-4">
+            <p className="text-sm text-slate-600">
+              Precisa de ajuda com conceitos de Engenharia de Software ou IA? O
+              assistente RAG responde com base nos tópicos do seu curso.
+            </p>
             <Button
-              variant="secondary"
-              onClick={() => setModalTutor(true)}
-              className="bg-white text-blue-600 hover:bg-blue-50 font-semibold text-xs"
+              variant="primary"
+              onClick={() => toggleRAGDrawer(true)}
+              icon={<Sparkles className="w-4 h-4" />}
+              className="w-full"
             >
-              Tutor Pedagógico IA
+              Iniciar Chat Tira-Dúvidas
             </Button>
           </div>
-
-          {/* Cards de Avisos e Quadro Geral */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 space-y-4">
-              <h2 className="text-sm font-bold text-slate-800 uppercase tracking-wider">
-                Avisos e Ocorrências Recentes
-              </h2>
-
-              <Card className="p-5 bg-white border border-slate-200 rounded-xl shadow-card space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full">
-                    Coordenação Acadêmica
-                  </span>
-                  <span className="text-[11px] text-slate-400">
-                    Hoje às 09:40
-                  </span>
-                </div>
-                <h3 className="text-sm font-bold text-slate-900">
-                  Prazo final para envio do Projeto Prático de React
-                </h3>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  Lembramos que a entrega final do Módulo Assíncrono deve ser
-                  realizada até dia 22/Set às 23:59 via plataforma.
-                </p>
-              </Card>
-
-              <Card className="p-5 bg-white border border-slate-200 rounded-xl shadow-card space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full">
-                    Presença Confirmada
-                  </span>
-                  <span className="text-[11px] text-slate-400">Ontem</span>
-                </div>
-                <h3 className="text-sm font-bold text-slate-900">
-                  Auditoria de Presença Assíncrona Atualizada
-                </h3>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  Sua participação nos fóruns de discussão garantiu 96% de
-                  presença calculada na disciplina INF-204.
-                </p>
-              </Card>
-            </div>
-
-            {/* Resumo do Calendário */}
-            <div className="space-y-4">
-              <h2 className="text-sm font-bold text-slate-800 uppercase tracking-wider">
-                Próximas Aulas
-              </h2>
-              <Card className="p-5 bg-white border border-slate-200 rounded-xl shadow-card space-y-3">
-                <div className="border-l-2 border-blue-600 pl-3">
-                  <span className="text-[11px] font-bold text-slate-400 block">
-                    Segunda-feira · 19:00
-                  </span>
-                  <strong className="text-xs text-slate-800 block">
-                    Arquitetura Web Avançada
-                  </strong>
-                  <span className="text-[11px] text-slate-500">
-                    Profª Dra. Helena Vasconcelos
-                  </span>
-                </div>
-                <div className="border-l-2 border-slate-300 pl-3 pt-2">
-                  <span className="text-[11px] font-bold text-slate-400 block">
-                    Quarta-feira · 20:40
-                  </span>
-                  <strong className="text-xs text-slate-800 block">
-                    Engenharia de Software
-                  </strong>
-                  <span className="text-[11px] text-slate-500">
-                    Prof. Roberto Almeida
-                  </span>
-                </div>
-              </Card>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* VISÃO: CENTRAL DO ALUNO (Com Abas) */}
-      {selectedMenu === "central" && (
-        <div className="space-y-6">
-          <div className="flex items-center justify-between border-b border-slate-200 pb-4">
-            <div>
-              <h1 className="text-xl font-bold text-slate-900">
-                Central do Aluno
-              </h1>
-              <p className="text-xs text-slate-500">
-                Acompanhamento completo de notas, faltas e vida acadêmica
-              </p>
-            </div>
-          </div>
-
-          {/* Seletor de Abas da Central */}
-          <div className="flex gap-2 border-b border-slate-200">
-            {(
-              [
-                ["desempenho", "Desempenho"],
-                ["faltas", "Faltas & Presença"],
-                ["notas", "Notas Detalhadas"],
-                ["ocorrencias", "Ocorrências"],
-                ["plano", "Plano de Aula"],
-              ] as const
-            ).map(([tabKey, label]) => (
-              <button
-                key={tabKey}
-                onClick={() => setCentralAba(tabKey as CentralTabOption)}
-                className={`pb-3 px-3 text-xs font-semibold border-b-2 transition-colors ${
-                  centralAba === tabKey
-                    ? "border-blue-600 text-blue-600"
-                    : "border-transparent text-slate-500 hover:text-slate-800"
-                }`}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-
-          {/* Conteúdo da Aba Selecionada */}
-          {centralAba === "notas" && (
-            <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-card">
-              <table className="w-full text-left text-xs">
-                <thead className="bg-slate-50 border-b border-slate-200 text-slate-700 font-bold">
-                  <tr>
-                    <th className="p-3.5">Disciplina</th>
-                    <th className="p-3.5">P1</th>
-                    <th className="p-3.5">P2</th>
-                    <th className="p-3.5">Trabalho</th>
-                    <th className="p-3.5">Média</th>
-                    <th className="p-3.5 text-right">Status</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {MOCK_NOTAS_ALUNO.map((n) => (
-                    <tr key={n.id} className="hover:bg-slate-50/80">
-                      <td className="p-3.5 font-semibold text-slate-900">
-                        {n.disciplina}
-                      </td>
-                      <td className="p-3.5 text-slate-600">
-                        {n.p1.toFixed(1)}
-                      </td>
-                      <td className="p-3.5 text-slate-600">
-                        {n.p2.toFixed(1)}
-                      </td>
-                      <td className="p-3.5 text-slate-600">
-                        {n.trabalho.toFixed(1)}
-                      </td>
-                      <td className="p-3.5 font-bold text-blue-600">
-                        {n.media.toFixed(1)}
-                      </td>
-                      <td className="p-3.5 text-right">
-                        <Badge
-                          variant={n.status === "Aprovado" ? "lowRisk" : "info"}
-                        >
-                          {n.status}
-                        </Badge>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-
-          {centralAba === "faltas" && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {MOCK_FREQUENCIA_ALUNO.map((f) => (
-                <Card
-                  key={f.disciplinaId}
-                  className="p-4 bg-white border border-slate-200 rounded-xl shadow-card"
-                >
-                  <span className="text-[10px] font-bold text-blue-600 uppercase">
-                    {f.disciplinaId}
-                  </span>
-                  <h3 className="text-xs font-bold text-slate-900 mt-0.5">
-                    {f.nomeDisciplina}
-                  </h3>
-                  <div className="mt-3 flex justify-between items-baseline">
-                    <span className="text-2xl font-bold text-slate-900">
-                      {f.percentualPresenca}%
-                    </span>
-                    <span className="text-xs text-slate-500">
-                      Presença Calculada
-                    </span>
-                  </div>
-                </Card>
-              ))}
-            </div>
-          )}
-
-          {(centralAba === "desempenho" ||
-            centralAba === "ocorrencias" ||
-            centralAba === "plano") && (
-            <Card className="p-6 bg-white border border-slate-200 rounded-xl text-center text-xs text-slate-500">
-              Módulo de {centralAba.toUpperCase()} carregado e integrado ao
-              sistema de registros.
-            </Card>
-          )}
-        </div>
-      )}
-
-      {/* VISÃO: OUTRAS SEÇÕES (Grade, Horários, Secretaria, Documentos) */}
-      {selectedMenu !== "mural" && selectedMenu !== "central" && (
-        <Card className="p-8 bg-white border border-slate-200 rounded-xl text-center space-y-2">
-          <h2 className="text-base font-bold text-slate-900 capitalize">
-            {selectedMenu.replace("-", " ")}
-          </h2>
-          <p className="text-xs text-slate-500">
-            Painel institucional do aluno para a seção {selectedMenu}.
-          </p>
         </Card>
-      )}
+      </div>
 
-      <AssistentePedagogicoModal
-        isOpen={modalTutor}
-        onClose={() => setModalTutor(false)}
-      />
+      {/* Tabela de Desempenho e Média Parcial */}
+      <Card
+        title="Minhas Disciplinas Ativas"
+        subtitle="Acompanhamento detalhado de notas e faltas por módulo"
+      >
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm border-collapse">
+            <thead>
+              <tr className="bg-slate-100 border-b border-slate-200 text-slate-700 font-semibold">
+                <th scope="col" className="p-3">
+                  Código / Disciplina
+                </th>
+                <th scope="col" className="p-3">
+                  Frequência Assíncrona
+                </th>
+                <th scope="col" className="p-3">
+                  Média Parcial
+                </th>
+                <th scope="col" className="p-3">
+                  Status
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-200">
+              {mockDisciplines.map((d) => (
+                <tr key={d.id} className="hover:bg-slate-50 transition-colors">
+                  <td className="p-3 font-medium text-slate-900">
+                    <span className="text-xs text-slate-500 block">
+                      {d.code}
+                    </span>
+                    {d.name}
+                  </td>
+                  <td className="p-3">
+                    <span className="font-semibold text-slate-800">
+                      {d.frequenciaAsync}%
+                    </span>
+                  </td>
+                  <td className="p-3 font-bold text-slate-900">
+                    {d.notaAtual.toFixed(1)}
+                  </td>
+                  <td className="p-3">
+                    {d.statusAprovacao === "EM_RISCO" ? (
+                      <Badge level="ALTO" text="Atenção / Risco" />
+                    ) : (
+                      <Badge level="BAIXO" text="Regular" />
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Card>
+
+      {/* Linha do Tempo de Entregas */}
+      <Card
+        title="Próximos Prazos & Entregas"
+        subtitle="Cronograma de atividades avaliativas"
+      >
+        <div className="space-y-3">
+          {mockDeadlines.map((item) => (
+            <div
+              key={item.id}
+              className="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-200"
+            >
+              <div className="flex items-center gap-3">
+                <Clock className="w-5 h-5 text-slate-500" />
+                <div>
+                  <span className="text-xs font-bold text-blue-900 block">
+                    {item.disciplineName}
+                  </span>
+                  <span className="text-sm font-semibold text-slate-900">
+                    {item.title}
+                  </span>
+                </div>
+              </div>
+              <div>
+                {item.daysRemaining === 0 ? (
+                  <Badge level="ALTO" text="Vence Hoje" />
+                ) : (
+                  <Badge
+                    level="MEDIO"
+                    text={`Faltam ${item.daysRemaining} dias`}
+                  />
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </Card>
     </div>
   );
 };

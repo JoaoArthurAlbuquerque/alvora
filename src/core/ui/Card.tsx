@@ -1,28 +1,38 @@
 // src/core/ui/Card.tsx
 import React from "react";
-import { cn } from "../lib/utils";
 
-interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
-  variant?: "highlight" | "standard" | "flat";
+interface CardProps {
   children: React.ReactNode;
+  className?: string;
+  title?: string;
+  subtitle?: string;
+  action?: React.ReactNode;
 }
 
 export const Card: React.FC<CardProps> = ({
-  variant = "standard",
-  className,
   children,
-  ...props
+  className = "",
+  title,
+  subtitle,
+  action,
 }) => {
-  const variants = {
-    highlight:
-      "bg-white border-2 border-[#E8A94C] rounded-[var(--radius-card)] p-6 shadow-xs",
-    standard:
-      "bg-white border border-[#16232E]/12 rounded-[var(--radius-card)] p-5 shadow-2xs",
-    flat: "bg-[#FAF7F2] border-b border-[#16232E]/10 rounded-[var(--radius-flat)] p-4",
-  };
-
   return (
-    <div className={cn(variants[variant], className)} {...props}>
+    <div
+      className={`bg-white border border-[#E2E8F0] rounded-xl p-5 shadow-xs transition-shadow ${className}`}
+    >
+      {(title || action) && (
+        <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-100">
+          <div>
+            {title && (
+              <h2 className="text-base font-bold text-[#0F172A]">{title}</h2>
+            )}
+            {subtitle && (
+              <p className="text-xs text-[#475569] mt-0.5">{subtitle}</p>
+            )}
+          </div>
+          {action && <div>{action}</div>}
+        </div>
+      )}
       {children}
     </div>
   );

@@ -1,45 +1,65 @@
 // src/core/ui/Button.tsx
 import React from "react";
-import { cn } from "../lib/utils";
+import { Loader2 } from "lucide-react";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "primary" | "secondary" | "outline" | "ghost" | "danger";
+  variant?: "primary" | "secondary" | "outline" | "danger";
   size?: "sm" | "md" | "lg";
-  children: React.ReactNode;
+  isLoading?: boolean;
+  icon?: React.ReactNode;
 }
 
 export const Button: React.FC<ButtonProps> = ({
+  children,
   variant = "primary",
   size = "md",
-  className,
-  children,
+  isLoading = false,
+  icon,
+  className = "",
+  disabled,
   ...props
 }) => {
-  const baseStyle =
-    "inline-flex items-center justify-center font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0B3D66] disabled:opacity-50 disabled:pointer-events-none rounded-[var(--radius-control)]";
+  const baseStyles =
+    "inline-flex items-center justify-center font-medium rounded-md transition-colors min-h-[44px] min-w-[44px] px-4 py-2 text-sm focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer";
 
   const variants = {
-    primary: "bg-[#0B3D66] text-white hover:bg-[#1E6FA3] active:bg-[#082D4B]",
+    primary:
+      "bg-[#2563EB] text-white hover:bg-blue-700 active:bg-blue-800 border border-transparent",
     secondary:
-      "bg-[#DCEEFA] text-[#0B3D66] hover:bg-[#C2E2F7] active:bg-[#A9D5F4]",
+      "bg-[#F1F5F9] text-[#0F172A] hover:bg-slate-200 active:bg-slate-300 border border-transparent",
     outline:
-      "border border-[#16232E]/20 bg-transparent text-[#16232E] hover:bg-[#FAF7F2]",
-    ghost: "bg-transparent text-[#16232E] hover:bg-[#DCEEFA]/50",
-    danger: "bg-[#C53030] text-white hover:bg-[#9B2C2C]",
+      "bg-transparent text-[#0F172A] border border-[#E2E8F0] hover:bg-slate-100",
+    danger:
+      "bg-[#FEE2E2] text-[#991B1B] border border-[#991B1B]/20 hover:bg-red-200",
   };
 
   const sizes = {
-    sm: "px-3 py-1.5 text-xs gap-1.5",
-    md: "px-4 py-2 text-sm gap-2",
-    lg: "px-6 py-3 text-base gap-2.5",
+    sm: "text-xs px-3 py-1.5 min-h-[38px]",
+    md: "text-sm px-4 py-2.5",
+    lg: "text-base px-5 py-3",
   };
 
   return (
     <button
-      className={cn(baseStyle, variants[variant], sizes[size], className)}
+      className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`}
+      disabled={disabled || isLoading}
       {...props}
     >
-      {children}
+      {isLoading ? (
+        <>
+          <Loader2 className="w-4 h-4 mr-2 animate-spin" aria-hidden="true" />
+          <span>Carregando...</span>
+        </>
+      ) : (
+        <>
+          {icon && (
+            <span className="mr-2 flex items-center" aria-hidden="true">
+              {icon}
+            </span>
+          )}
+          {children}
+        </>
+      )}
     </button>
   );
 };

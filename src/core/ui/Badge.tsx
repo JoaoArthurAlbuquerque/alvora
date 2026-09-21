@@ -1,36 +1,61 @@
 // src/core/ui/Badge.tsx
 import React from "react";
-import { cn } from "../lib/utils";
+import { CheckCircle2, AlertTriangle, AlertCircle, Info } from "lucide-react";
+import { RiskLevel } from "../../types";
 
 interface BadgeProps {
-  variant?: "lowRisk" | "midRisk" | "highRisk" | "info" | "accent";
-  children: React.ReactNode;
+  level?: RiskLevel | "NEUTRO" | "SUCESSO";
+  text: string;
   className?: string;
 }
 
 export const Badge: React.FC<BadgeProps> = ({
-  variant = "info",
-  children,
-  className,
+  level = "NEUTRO",
+  text,
+  className = "",
 }) => {
-  const styles = {
-    lowRisk: "bg-[#2F855A]/15 text-[#2F855A] border border-[#2F855A]/30",
-    midRisk: "bg-[#B7791F]/15 text-[#B7791F] border border-[#B7791F]/30",
-    highRisk: "bg-[#C53030]/15 text-[#C53030] border border-[#C53030]/30",
-    info: "bg-[#DCEEFA] text-[#0B3D66] border border-[#0B3D66]/20",
-    accent:
-      "bg-[#E8A94C]/20 text-[#16232E] border border-[#E8A94C]/50 font-semibold",
+  const config = {
+    BAIXO: {
+      bg: "bg-[#DCFCE7]",
+      text: "text-[#166534]",
+      border: "border-[#166534]/30",
+      Icon: CheckCircle2,
+    },
+    SUCESSO: {
+      bg: "bg-[#DCFCE7]",
+      text: "text-[#166534]",
+      border: "border-[#166534]/30",
+      Icon: CheckCircle2,
+    },
+    MEDIO: {
+      bg: "bg-[#FEF9C3]",
+      text: "text-[#854D0E]",
+      border: "border-[#854D0E]/30",
+      Icon: AlertTriangle,
+    },
+    ALTO: {
+      bg: "bg-[#FEE2E2]",
+      text: "text-[#991B1B]",
+      border: "border-[#991B1B]/30",
+      Icon: AlertCircle,
+    },
+    NEUTRO: {
+      bg: "bg-slate-100",
+      text: "text-slate-700",
+      border: "border-slate-300",
+      Icon: Info,
+    },
   };
+
+  const selected = config[level] || config.NEUTRO;
+  const { Icon } = selected;
 
   return (
     <span
-      className={cn(
-        "inline-flex items-center gap-1 px-2.5 py-0.5 text-xs font-medium rounded-[var(--radius-badge)]",
-        styles[variant],
-        className,
-      )}
+      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border ${selected.bg} ${selected.text} ${selected.border} ${className}`}
     >
-      {children}
+      <Icon className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+      <span>{text}</span>
     </span>
   );
 };

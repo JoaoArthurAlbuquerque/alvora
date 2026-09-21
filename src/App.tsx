@@ -1,19 +1,19 @@
 // src/App.tsx
-import React from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { AppLayout } from "./app/AppLayout";
+import React, { useState } from "react";
+import { AppLayout } from "./app/Applayout";
 import { AppRoutes } from "./app/routes";
+import { LoginPage } from "./modules/autenticacao/LoginPage";
 
-const queryClient = new QueryClient();
+export default function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(true);
 
-export const App: React.FC = () => {
+  if (!isAuthenticated) {
+    return <LoginPage onLoginSuccess={() => setIsAuthenticated(true)} />;
+  }
+
   return (
-    <QueryClientProvider client={queryClient}>
-      <AppLayout>
-        <AppRoutes />
-      </AppLayout>
-    </QueryClientProvider>
+    <AppLayout>
+      <AppRoutes />
+    </AppLayout>
   );
-};
-
-export default App;
+}
