@@ -138,12 +138,9 @@ export const AppLayout: React.FC = () => {
             )}
           </button>
           <div className="flex items-center gap-2">
-            <div className="bg-white text-[#1E3A8A] px-2 py-1 rounded-md font-black tracking-wider text-base">
-              SiDi
-            </div>
             <div>
               <span className="font-bold text-sm text-white block leading-tight">
-                Alvora AVA
+                Alvora
               </span>
               <span className="text-[10px] text-blue-200 block">
                 {currentUser?.polo || "Gestão Escolar"}

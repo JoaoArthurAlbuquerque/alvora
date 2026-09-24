@@ -61,11 +61,8 @@ export const LoginPage: React.FC = () => {
         {/* Cabeçalho */}
         <div className="text-center space-y-2">
           <div className="inline-block bg-[#1E3A8A] text-white font-black text-xl px-4 py-2 rounded-lg shadow-sm">
-            SiDi / Alvora
+            Alvora
           </div>
-          <h1 className="text-2xl font-bold text-slate-900">
-            Abrir o Dia Letivo
-          </h1>
           <p className="text-xs text-slate-600">
             Gestão Escolar & Ambiente Virtual de Aprendizagem Assíncrono
           </p>
