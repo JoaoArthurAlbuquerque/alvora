@@ -1,81 +1,50 @@
 import { create } from "zustand";
-import { User, UserRole } from "../../types";
-import { mockUsers } from "../../mocks/data";
+import { PapelUsuario, Usuario } from "../../types";
 
 interface AuthState {
-  currentUser: User | null;
-  isAuthenticated: boolean;
-  activeRole: UserRole;
-  isRAGDrawerOpen: boolean;
-  isCalendarModalOpen: boolean;
-  login: (credentials: {
-    matricula?: string;
-    code?: string;
-    role?: UserRole;
-  }) => boolean;
+  autenticado: boolean;
+  usuario: Usuario | null;
+  login: (papel: PapelUsuario) => void;
   logout: () => void;
-  switchRoleDev: (role: UserRole) => void;
-  toggleRAGDrawer: (open?: boolean) => void;
-  toggleCalendarModal: (open?: boolean) => void;
 }
 
-export const useAuthStore = create<AuthState>((set, get) => ({
-  currentUser: null,
-  isAuthenticated: false,
-  activeRole: "ALUNO",
-  isRAGDrawerOpen: false,
-  isCalendarModalOpen: false,
-
-  login: ({ matricula, code, role }) => {
-    let matchedUser: User | undefined;
-
-    if (matricula) {
-      matchedUser = mockUsers.find((u) => u.matricula === matricula);
-    } else if (role) {
-      matchedUser = mockUsers.find((u) => u.role === role);
-    } else if (code === "2026") {
-      matchedUser = mockUsers[0]; // Retorna aluno por padrão com código único
-    }
-
-    if (matchedUser) {
-      set({
-        currentUser: matchedUser,
-        isAuthenticated: true,
-        activeRole: matchedUser.role,
-      });
-      return true;
-    }
-    return false;
+const mockUsuarios: Record<PapelUsuario, Usuario> = {
+  aluno: {
+    id: "usr-1",
+    nome: "João Arthur Albuquerque",
+    email: "joao.albuquerque@alvora.edu.br",
+    papel: "aluno",
+    turmaOuCargo: "Sistemas de Informação - 4º Período",
   },
+  professor: {
+    id: "usr-2",
+    nome: "Prof. Carlos Eduardo",
+    email: "carlos.eduardo@alvora.edu.br",
+    papel: "professor",
+    turmaOuCargo: "Docente de Algoritmos e Estrutura de Dados",
+  },
+  gestor: {
+    id: "usr-3",
+    nome: "Dra. Maria Helena",
+    email: "maria.helena@alvora.edu.br",
+    papel: "gestor",
+    turmaOuCargo: "Coordenação Pedagógica Geral",
+  },
+};
 
+export const useAuthStore = create<AuthState>((set) => ({
+  autenticado: false,
+  usuario: null,
+  login: (papel: PapelUsuario) => {
+    set({
+      autenticado: true,
+      usuario: mockUsuarios[papel],
+    });
+  },
   logout: () => {
     set({
-      currentUser: null,
-      isAuthenticated: false,
-      isRAGDrawerOpen: false,
-      isCalendarModalOpen: false,
+      autenticado: false,
+      usuario: null,
     });
   },
-
-  switchRoleDev: (role: UserRole) => {
-    const matchedUser = mockUsers.find((u) => u.role === role) || {
-      ...mockUsers[0],
-      role,
-    };
-    set({
-      activeRole: role,
-      currentUser: matchedUser,
-    });
-  },
-
-  toggleRAGDrawer: (open) =>
-    set((state) => ({
-      isRAGDrawerOpen: open !== undefined ? open : !state.isRAGDrawerOpen,
-    })),
-
-  toggleCalendarModal: (open) =>
-    set((state) => ({
-      isCalendarModalOpen:
-        open !== undefined ? open : !state.isCalendarModalOpen,
-    })),
 }));

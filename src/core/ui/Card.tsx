@@ -1,37 +1,22 @@
 import React from "react";
 
-interface CardProps {
-  children: React.ReactNode;
-  className?: string;
-  title?: string;
-  subtitle?: string;
-  action?: React.ReactNode;
+interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
+  hoverable?: boolean;
 }
 
 export const Card: React.FC<CardProps> = ({
   children,
   className = "",
-  title,
-  subtitle,
-  action,
+  hoverable = false,
+  ...props
 }) => {
   return (
     <div
-      className={`bg-white border border-[#E2E8F0] rounded-xl p-5 shadow-xs transition-shadow ${className}`}
+      className={`bg-white rounded-2xl p-6 shadow-flat border border-[#5170FF]/10 transition-all duration-200 ${
+        hoverable ? "hover:-translate-y-0.5 hover:border-[#5170FF]/25" : ""
+      } ${className}`}
+      {...props}
     >
-      {(title || action) && (
-        <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-100">
-          <div>
-            {title && (
-              <h2 className="text-base font-bold text-[#0F172A]">{title}</h2>
-            )}
-            {subtitle && (
-              <p className="text-xs text-[#475569] mt-0.5">{subtitle}</p>
-            )}
-          </div>
-          {action && <div>{action}</div>}
-        </div>
-      )}
       {children}
     </div>
   );

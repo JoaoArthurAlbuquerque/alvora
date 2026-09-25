@@ -1,39 +1,24 @@
+// src/modules/calendario/CalendarioModal.tsx
 import React from "react";
-import { useAuthStore } from "../../core/auth/useAuthStore";
 import { Modal } from "../../core/ui/Modal";
-import { mockCalendarEvents } from "../../mocks/data";
-import { Calendar as CalendarIcon } from "lucide-react";
-import { Badge } from "../../core/ui/Badge";
 
-export const CalendarioModal: React.FC = () => {
-  const { isCalendarModalOpen, toggleCalendarModal } = useAuthStore();
+interface Props {
+  isOpen: boolean;
+  onClose: () => void;
+}
 
+export const CalendarioModal: React.FC<Props> = ({ isOpen, onClose }) => {
   return (
-    <Modal
-      isOpen={isCalendarModalOpen}
-      onClose={() => toggleCalendarModal(false)}
-      title="Calendário Acadêmico Unificado"
-    >
+    <Modal isOpen={isOpen} onClose={onClose} title="Calendário Acadêmico 2026">
       <div className="space-y-3">
-        {mockCalendarEvents.map((ev) => (
-          <div
-            key={ev.id}
-            className="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-200"
-          >
-            <div className="flex items-center gap-3">
-              <CalendarIcon className="w-5 h-5 text-blue-900" />
-              <div>
-                <span className="text-xs font-bold text-slate-500 block">
-                  {ev.date}
-                </span>
-                <span className="text-sm font-semibold text-slate-900">
-                  {ev.title}
-                </span>
-              </div>
-            </div>
-            <Badge level="NEUTRO" text={ev.type} />
-          </div>
-        ))}
+        <div className="p-3 rounded-xl bg-[#5170FF]/10 text-[#5170FF] flex justify-between items-center text-xs font-bold">
+          <span>25 de Setembro, 2026</span>
+          <span>Início de Entregas Parciais</span>
+        </div>
+        <div className="p-3 rounded-xl bg-[#5170FF]/5 text-slate-700 flex justify-between items-center text-xs font-medium">
+          <span>15 de Outubro, 2026</span>
+          <span>Avaliação Geral do Semestre</span>
+        </div>
       </div>
     </Modal>
   );

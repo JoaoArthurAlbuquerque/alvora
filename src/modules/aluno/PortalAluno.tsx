@@ -1,184 +1,129 @@
+// src/modules/aluno/PortalAluno.tsx
 import React from "react";
-import { useLocation } from "react-router-dom";
 import { Card } from "../../core/ui/Card";
 import { Badge } from "../../core/ui/Badge";
 import { Button } from "../../core/ui/Button";
-import { mockDisciplines, mockDeadlines, mockUsers } from "../../mocks/data";
-import { ShieldCheck, Clock, Sparkles } from "lucide-react";
-import { useAuthStore } from "../../core/auth/useAuthStore";
 
 export const PortalAluno: React.FC = () => {
-  const location = useLocation();
-  const { toggleRAGDrawer } = useAuthStore();
-  const aluno = mockUsers[0];
-
-  const currentTab = location.pathname.split("/")[2] || "painel";
+  const disciplinas = [
+    {
+      id: 1,
+      nome: "Desenvolvimento Front-End Especializado",
+      progresso: 85,
+      faltas: 2,
+      proximaAula: "Hoje, 19:00",
+    },
+    {
+      id: 2,
+      nome: "Engenharia de Software e Arquitetura",
+      progresso: 60,
+      faltas: 0,
+      proximaAula: "Amanhã, 08:00",
+    },
+    {
+      id: 3,
+      nome: "Sistemas Distribuídos e Cloud",
+      progresso: 40,
+      faltas: 1,
+      proximaAula: "Quinta, 10:00",
+    },
+  ];
 
   return (
     <div className="space-y-6">
-      {/* Cabeçalho */}
-      <div className="bg-white border border-[#E2E8F0] rounded-xl p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-xl font-bold text-slate-900">
-            Olá, {aluno.name}
-          </h1>
-          <p className="text-sm text-slate-600 mt-1">
-            Matrícula:{" "}
-            <strong className="text-slate-800">{aluno.matricula}</strong> |{" "}
-            {aluno.curso}
-          </p>
-        </div>
-        <div className="flex items-center gap-4 bg-slate-50 p-3 rounded-lg border border-slate-200">
+      {/* Banner Principal */}
+      <Card className="bg-gradient-to-r from-[#5170FF] to-[#3B59FF] text-white border-none p-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <span className="text-xs text-slate-500 block">
-              Progresso no Semestre
+            <span className="bg-white/20 text-white text-xs font-semibold px-3 py-1 rounded-full">
+              Semestre 2026.2
             </span>
-            <span className="text-lg font-extrabold text-blue-900">
-              88% Concluído
-            </span>
+            <h1 className="text-2xl font-bold mt-2">
+              Bem-vindo de volta, João!
+            </h1>
+            <p className="text-white/80 text-sm mt-1">
+              Seu rendimento acadêmico está 12% acima da média geral.
+            </p>
           </div>
-          <div className="w-24 bg-slate-200 h-2.5 rounded-full overflow-hidden">
-            <div className="bg-blue-600 h-full w-[88%]" />
-          </div>
+          <Button
+            variant="outline"
+            className="bg-white text-[#5170FF] hover:bg-white/90 border-none"
+          >
+            Ver Boletim Completo
+          </Button>
         </div>
+      </Card>
+
+      {/* Grid de Métricas */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card>
+          <p className="text-xs font-bold text-[#5170FF] uppercase">
+            Média Geral
+          </p>
+          <p className="text-3xl font-extrabold text-slate-900 mt-2">8.9</p>
+          <Badge variant="success" className="mt-3">
+            Aprovado por Média
+          </Badge>
+        </Card>
+        <Card>
+          <p className="text-xs font-bold text-[#5170FF] uppercase">
+            Frequência Global
+          </p>
+          <p className="text-3xl font-extrabold text-slate-900 mt-2">96%</p>
+          <Badge variant="primary" className="mt-3">
+            Excelente
+          </Badge>
+        </Card>
+        <Card>
+          <p className="text-xs font-bold text-[#5170FF] uppercase">
+            Entregas Pendentes
+          </p>
+          <p className="text-3xl font-extrabold text-slate-900 mt-2">02</p>
+          <Badge variant="warning" className="mt-3">
+            Prazo em 3 dias
+          </Badge>
+        </Card>
       </div>
 
-      {/* Sub-rota: Painel */}
-      {(currentTab === "painel" || currentTab === "frequencia") && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card
-            title="Frequência Assíncrona Consolidada"
-            subtitle="Registrada por consumo de conteúdo e entregas de atividades"
-          >
-            <div className="flex flex-col sm:flex-row items-center gap-6 py-2">
-              <div className="w-28 h-28 rounded-full border-8 border-teal-500/20 flex items-center justify-center">
-                <span className="text-2xl font-black text-slate-900">88%</span>
-              </div>
-              <div className="space-y-3 flex-1 text-center sm:text-left">
-                <div className="inline-flex items-center gap-2 bg-teal-50 border border-teal-200 text-teal-800 text-xs px-3 py-1.5 rounded-md font-semibold">
-                  <ShieldCheck className="w-4 h-4 text-teal-600" />
-                  <span>Calculado por IA (Auditado)</span>
-                </div>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  Presença computada considerando visualização de videoaulas,
-                  leitura e tarefas.
+      {/* Minhas Disciplinas */}
+      <div className="space-y-4">
+        <h3 className="text-base font-bold text-slate-800">
+          Minhas Disciplinas Em Andamento
+        </h3>
+        <div className="grid grid-cols-1 gap-4">
+          {disciplinas.map((d) => (
+            <Card
+              key={d.id}
+              hoverable
+              className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
+            >
+              <div className="space-y-1 flex-1">
+                <h4 className="font-bold text-slate-900 text-sm">{d.nome}</h4>
+                <p className="text-xs text-slate-500">
+                  Próxima Aula: {d.proximaAula}
                 </p>
               </div>
-            </div>
-          </Card>
 
-          <Card
-            title="Assistente Pedagógico RAG"
-            subtitle="Suporte direto baseado na ementa oficial"
-          >
-            <div className="space-y-4">
-              <p className="text-sm text-slate-600">
-                Dúvidas em Engenharia de Software ou IA? O assistente RAG
-                responde com base nas ementas.
-              </p>
-              <Button
-                variant="primary"
-                onClick={() => toggleRAGDrawer(true)}
-                icon={<Sparkles className="w-4 h-4" />}
-                className="w-full"
-              >
-                Iniciar Chat Tira-Dúvidas
-              </Button>
-            </div>
-          </Card>
-        </div>
-      )}
-
-      {/* Sub-rota: Notas */}
-      {(currentTab === "painel" || currentTab === "notas") && (
-        <Card
-          title="Minhas Disciplinas e Boletim"
-          subtitle="Acompanhamento de médias parciais"
-        >
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm border-collapse">
-              <thead>
-                <tr className="bg-slate-100 border-b border-slate-200 text-slate-700 font-semibold">
-                  <th scope="col" className="p-3">
-                    Código / Disciplina
-                  </th>
-                  <th scope="col" className="p-3">
-                    Frequência
-                  </th>
-                  <th scope="col" className="p-3">
-                    Média Parcial
-                  </th>
-                  <th scope="col" className="p-3">
-                    Status
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-200">
-                {mockDisciplines.map((d) => (
-                  <tr key={d.id} className="hover:bg-slate-50">
-                    <td className="p-3 font-medium text-slate-900">
-                      <span className="text-xs text-slate-500 block">
-                        {d.code}
-                      </span>
-                      {d.name}
-                    </td>
-                    <td className="p-3 font-semibold text-slate-800">
-                      {d.frequenciaAsync}%
-                    </td>
-                    <td className="p-3 font-bold text-slate-900">
-                      {d.notaAtual.toFixed(1)}
-                    </td>
-                    <td className="p-3">
-                      {d.statusAprovacao === "EM_RISCO" ? (
-                        <Badge level="ALTO" text="Atenção / Risco" />
-                      ) : (
-                        <Badge level="BAIXO" text="Regular" />
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </Card>
-      )}
-
-      {/* Sub-rota: Tarefas */}
-      {(currentTab === "painel" || currentTab === "tarefas") && (
-        <Card
-          title="Próximos Prazos & Entregas"
-          subtitle="Cronograma de atividades"
-        >
-          <div className="space-y-3">
-            {mockDeadlines.map((item) => (
-              <div
-                key={item.id}
-                className="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-200"
-              >
-                <div className="flex items-center gap-3">
-                  <Clock className="w-5 h-5 text-slate-500" />
-                  <div>
-                    <span className="text-xs font-bold text-blue-900 block">
-                      {item.disciplineName}
-                    </span>
-                    <span className="text-sm font-semibold text-slate-900">
-                      {item.title}
-                    </span>
-                  </div>
+              <div className="w-full md:w-48 space-y-1">
+                <div className="flex justify-between text-xs font-semibold">
+                  <span className="text-slate-500">Progresso</span>
+                  <span className="text-[#5170FF]">{d.progresso}%</span>
                 </div>
-                <Badge
-                  level={item.daysRemaining === 0 ? "ALTO" : "MEDIO"}
-                  text={
-                    item.daysRemaining === 0
-                      ? "Vence Hoje"
-                      : `Faltam ${item.daysRemaining} dias`
-                  }
-                />
+                <div className="w-full bg-[#5170FF]/10 h-2 rounded-full overflow-hidden">
+                  <div
+                    className="bg-gradient-to-r from-[#5170FF] to-[#3B59FF] h-full rounded-full"
+                    style={{ width: `${d.progresso}%` }}
+                  />
+                </div>
               </div>
-            ))}
-          </div>
-        </Card>
-      )}
+
+              <Button variant="secondary" size="sm">
+                Acessar Sala
+              </Button>
+            </Card>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };

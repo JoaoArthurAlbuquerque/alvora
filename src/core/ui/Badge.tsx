@@ -1,60 +1,28 @@
 import React from "react";
-import { CheckCircle2, AlertTriangle, AlertCircle, Info } from "lucide-react";
-import { RiskLevel } from "../../types";
 
 interface BadgeProps {
-  level?: RiskLevel | "NEUTRO" | "SUCESSO";
-  text: string;
+  children: React.ReactNode;
+  variant?: "primary" | "success" | "warning" | "info";
   className?: string;
 }
 
 export const Badge: React.FC<BadgeProps> = ({
-  level = "NEUTRO",
-  text,
+  children,
+  variant = "primary",
   className = "",
 }) => {
-  const config = {
-    BAIXO: {
-      bg: "bg-[#DCFCE7]",
-      text: "text-[#166534]",
-      border: "border-[#166534]/30",
-      Icon: CheckCircle2,
-    },
-    SUCESSO: {
-      bg: "bg-[#DCFCE7]",
-      text: "text-[#166534]",
-      border: "border-[#166534]/30",
-      Icon: CheckCircle2,
-    },
-    MEDIO: {
-      bg: "bg-[#FEF9C3]",
-      text: "text-[#854D0E]",
-      border: "border-[#854D0E]/30",
-      Icon: AlertTriangle,
-    },
-    ALTO: {
-      bg: "bg-[#FEE2E2]",
-      text: "text-[#991B1B]",
-      border: "border-[#991B1B]/30",
-      Icon: AlertCircle,
-    },
-    NEUTRO: {
-      bg: "bg-slate-100",
-      text: "text-slate-700",
-      border: "border-slate-300",
-      Icon: Info,
-    },
+  const styles = {
+    primary: "bg-[#5170FF]/10 text-[#5170FF] border-[#5170FF]/20",
+    success: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20",
+    warning: "bg-amber-500/10 text-amber-600 border-amber-500/20",
+    info: "bg-[#5170FF]/15 text-[#3B59FF] border-[#5170FF]/30",
   };
-
-  const selected = config[level] || config.NEUTRO;
-  const { Icon } = selected;
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border ${selected.bg} ${selected.text} ${selected.border} ${className}`}
+      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border ${styles[variant]} ${className}`}
     >
-      <Icon className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
-      <span>{text}</span>
+      {children}
     </span>
   );
 };

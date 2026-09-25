@@ -1,12 +1,8 @@
-// src/App.tsx
 import React from "react";
-import { BrowserRouter } from "react-router-dom";
 import { AppRoutes } from "./app/routes";
 
-export default function App() {
-  return (
-    <BrowserRouter>
-      <AppRoutes />
-    </BrowserRouter>
-  );
+export function App() {
+  return <AppRoutes />;
 }
+
+export default App;

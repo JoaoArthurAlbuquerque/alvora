@@ -1,5 +1,4 @@
-import React, { useEffect } from "react";
-import { X } from "lucide-react";
+import React from "react";
 
 interface ModalProps {
   isOpen: boolean;
@@ -14,43 +13,21 @@ export const Modal: React.FC<ModalProps> = ({
   title,
   children,
 }) => {
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-      window.addEventListener("keydown", handleKeyDown);
-    }
-    return () => {
-      document.body.style.overflow = "unset";
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [isOpen, onClose]);
-
   if (!isOpen) return null;
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="modal-title"
-    >
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-xl max-w-lg w-full p-6 animate-in fade-in duration-150">
-        <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
-          <h2 id="modal-title" className="text-lg font-bold text-slate-900">
-            {title}
-          </h2>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#0F172A]/40 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+      <div className="bg-white w-full max-w-xl rounded-2xl shadow-flat border border-[#5170FF]/15 overflow-hidden flex flex-col max-h-[90vh]">
+        <div className="px-6 py-4 border-b border-[#5170FF]/10 flex items-center justify-between bg-[#5170FF]/5">
+          <h3 className="text-lg font-bold text-[#0F172A]">{title}</h3>
           <button
             onClick={onClose}
-            className="p-2 text-slate-500 hover:text-slate-800 rounded-md focus-visible:ring-2 focus-visible:ring-blue-600 cursor-pointer min-h-[44px] min-w-[44px] flex items-center justify-center"
-            aria-label="Fechar Modal"
+            className="text-slate-400 hover:text-[#5170FF] p-1.5 rounded-lg hover:bg-[#5170FF]/10 transition-colors"
           >
-            <X className="w-5 h-5" />
+            ✕
           </button>
         </div>
-        <div>{children}</div>
+        <div className="p-6 overflow-y-auto space-y-4">{children}</div>
       </div>
     </div>
   );

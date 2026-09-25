@@ -1,64 +1,61 @@
 import React from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
-import { ProtectedRoute } from "./ProtectedRoute";
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Navigate,
+} from "react-router-dom";
 import { AppLayout } from "./Applayout";
+import { ProtectedRoute } from "./ProtectedRoute";
 import { LoginPage } from "../modules/autenticacao/LoginPage";
 import { PortalAluno } from "../modules/aluno/PortalAluno";
 import { PortalProfessor } from "../modules/professor/PortalProfessor";
-import { LancamentoFrequencia } from "../modules/professor/LancamentoFrequencia";
 import { PortalGestor } from "../modules/gestor/PortalGestor";
+import { LancamentoFrequencia } from "../modules/professor/LancamentoFrequencia";
+import { useAuthStore } from "../core/auth/useAuthStore";
 
-export const AppRoutes: React.FC = () => {
-  return (
-    <Routes>
-      {/* Rota Pública Primária de Autenticação */}
-      <Route path="/login" element={<LoginPage />} />
+const IndexRoute: React.FC = () => {
+  const usuario = useAuthStore((state) => state.usuario);
 
-      {/* Rotas Protegidas no AppLayout */}
-      <Route element={<ProtectedRoute />}>
-        <Route element={<AppLayout />}>
-          {/* Rotas Aluno */}
-          <Route
-            path="/aluno"
-            element={<Navigate to="/aluno/painel" replace />}
-          />
-          <Route path="/aluno/painel" element={<PortalAluno />} />
-          <Route path="/aluno/frequencia" element={<PortalAluno />} />
-          <Route path="/aluno/notas" element={<PortalAluno />} />
-          <Route path="/aluno/tarefas" element={<PortalAluno />} />
-          <Route path="/aluno/calendario" element={<PortalAluno />} />
+  if (!usuario) return <Navigate to="/login" replace />;
 
-          {/* Rotas Professor */}
-          <Route
-            path="/professor"
-            element={<Navigate to="/professor/turmas" replace />}
-          />
-          <Route path="/professor/turmas" element={<PortalProfessor />} />
-          <Route
-            path="/professor/frequencia"
-            element={<LancamentoFrequencia />}
-          />
-          <Route path="/professor/notas" element={<PortalProfessor />} />
-          <Route path="/professor/auditoria" element={<PortalProfessor />} />
-          <Route path="/professor/alertas" element={<PortalProfessor />} />
-          <Route path="/professor/calendario" element={<PortalProfessor />} />
+  if (usuario.papel === "aluno") return <PortalAluno />;
+  if (usuario.papel === "professor") return <PortalProfessor />;
+  if (usuario.papel === "gestor") return <PortalGestor />;
 
-          {/* Rotas Gestor */}
-          <Route
-            path="/gestor"
-            element={<Navigate to="/gestor/dashboard" replace />}
-          />
-          <Route path="/gestor/dashboard" element={<PortalGestor />} />
-          <Route path="/gestor/risco" element={<PortalGestor />} />
-          <Route path="/gestor/auditoria" element={<PortalGestor />} />
-          <Route path="/gestor/relatorios" element={<PortalGestor />} />
-          <Route path="/gestor/calendario" element={<PortalGestor />} />
-        </Route>
-      </Route>
-
-      {/* Redirecionamento Padrão da Raiz */}
-      <Route path="/" element={<Navigate to="/login" replace />} />
-      <Route path="*" element={<Navigate to="/login" replace />} />
-    </Routes>
-  );
+  return <PortalAluno />;
 };
+
+export const router = createBrowserRouter([
+  {
+    path: "/login",
+    element: <LoginPage />,
+  },
+  {
+    path: "/",
+    element: <ProtectedRoute />,
+    children: [
+      {
+        path: "/",
+        element: <AppLayout />,
+        children: [
+          { index: true, element: <IndexRoute /> },
+          { path: "aluno", element: <PortalAluno /> },
+          { path: "professor", element: <PortalProfessor /> },
+          { path: "gestor", element: <PortalGestor /> },
+          { path: "frequencia", element: <LancamentoFrequencia /> },
+        ],
+      },
+    ],
+  },
+  {
+    path: "*",
+    element: <Navigate to="/" replace />,
+  },
+]);
+
+// Componente AppRoutes exportado como export nomeado e default
+export const AppRoutes: React.FC = () => {
+  return <RouterProvider router={router} />;
+};
+
+export default AppRoutes;
